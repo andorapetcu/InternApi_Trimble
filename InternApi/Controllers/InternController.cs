@@ -33,6 +33,17 @@ namespace InternApi.Controllers
                 return Ok(intern);
         }
 
+        [HttpGet("sortByName")]
+        public async Task<IActionResult> SortByAscName()
+        {
+            return Ok(await _internService.SortAscByName());
+        }
+
+        [HttpGet("sortDescByName")]
+        public async Task<IActionResult> SortDescByName()
+        {
+            return Ok(await _internService.SortDescByName());
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] InternDTO internDTO)

@@ -37,6 +37,17 @@ namespace InternApi.Services
             return _mapper.Map<InternDTO>(intern);
         }
 
+        public async Task<List<InternDTO>> SortAscByName()
+        {
+            var interns = await GetAll();
+            return interns.OrderBy(intern => intern.Name).ToList();
+        }
+
+        public async Task<List<InternDTO>> SortDescByName()
+        {
+            var interns = await GetAll();
+            return interns.OrderByDescending(intern => intern.Name).ToList();
+        }
 
         public async Task<bool> Create(InternDTO internDTO)
         {
