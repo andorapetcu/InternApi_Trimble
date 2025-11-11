@@ -1,63 +1,68 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using InternApi.ModelEntity;
-//using InternApi.ModelDTO;
+﻿using Microsoft.AspNetCore.Mvc;
+using InternApi.ModelEntity;
+using InternApi.ModelDTO;
+using InternApi.Services;
 
-//namespace InternApi.Controllers
-//{
-//    [ApiController]
-//    [Route("[controller]")]
-//    public class InternController : ControllerBase
-//    {
-//       private static readonly Dictionary<Guid, Intern> Interns = new();
+namespace InternApi.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class InternController : ControllerBase
+    {
 
-//        static InternController()
-//        {
-//            var intern1 = new Intern
-//            {
-//                Name = "Alice Johnson",
-//                Age = 22,
-//                Date = new DateTime(2003, 1, 15)
-//            };
-//            var intern2 = new Intern
-//            {
-//                Name = "Bob Smith",
-//                Age = 24,
-//                Date = new DateTime(2005, 7, 23)
-//            };
-//            Interns[intern1.Id] = intern1;
-//            Interns[intern2.Id] = intern2;
-//        }
+        InternService _internService;
+
+        public InternController(InternService internService)
+        {
+            _internService = internService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            return Ok(await _internService.GetAll());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetIntern(Guid id)
+        {
+            var intern = await _internService.GetById(id);
+            if (intern == null)
+                return NotFound();
+            else
+                return Ok(intern);
+        }
 
 
-//        [HttpGet("{id}")]
-//        public ActionResult<InternDTO> GetInternById(Guid id)
-//        {
-//            if (Interns.TryGetValue(id, out var intern))
-//            {
-//                var internDTO = new InternDTO
-//                {
-//                    Id = intern.Id,
-//                    Name = intern.Name,
-//                    Age = intern.Age,
-//                    date = intern.Date
-//                };
-//                return Ok(internDTO);
-//            }
-//            return NotFound();
-//        }
-//        [HttpPost]
-//        public ActionResult<InternDTO> CreateIntern(InternDTO internDTO)
-//        {
-//            var intern = new Intern
-//            {
-//                Id = Guid.NewGuid(),
-//                Name = internDTO.Name,
-//                Age = internDTO.Age,
-//                Date = internDTO.date
-//            };
-//            Interns[intern.Id] = intern;
-//            internDTO.Id = intern.Id;
-//            return CreatedAtAction(nameof(GetInternById), new { id = intern.Id }, internDTO);
-//        }
-//    }
-//}
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] InternDTO internDTO)
+        {
+            var result = await _internService.Create(internDTO);
+            if (!result)
+                return BadRequest("intern cannot be created");
+            else
+                return Ok(internDTO);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromBody] InternDTO internDTO, Guid id)
+        {
+            var result = await _internService.Update(id, internDTO);
+            if (!result)
+                return NotFound();
+            else
+                return Ok(internDTO);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteIntern(Guid id)
+        {
+            var result = await _internService.Delete(id);
+            if (!result)
+                return NotFound();
+            else
+                return NoContent();
+        }
+
+    }
+}

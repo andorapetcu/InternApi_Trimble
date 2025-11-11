@@ -9,6 +9,6 @@ namespace InternApi.ModelDTO
 
         public int Age { get; set; }
 
-        public DateAndTime date { get; set; }
+        public DateTime date { get; set; }
     }
 }

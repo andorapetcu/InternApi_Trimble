@@ -4,9 +4,9 @@ using InternApi.ModelEntity;
 
 namespace InternApi.Mapping
 {
-    public class Mapperprofile : Profile
+    public class MapperProfile : Profile
     {
-        public Mapperprofile() {
+        public MapperProfile() {
             CreateMap<Intern, InternDTO>();
             CreateMap<InternDTO, Intern>();
         }

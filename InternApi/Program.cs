@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
-using Workshops.Mapping;
-using Workshops.Services;
-using Workshops.Settings;
+using InternApi.Mapping;
+using InternApi.Services;
+using InternApi.Settings;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -17,6 +17,27 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.Configure<MongoDBSettings>(
+    builder.Configuration.GetSection(nameof(MongoDBSettings)));
+
+builder.Services.AddSingleton<IMongoDBSettings>(sp =>
+    sp.GetRequiredService<IOptions<MongoDBSettings>>().Value);
+
+builder.Services.AddSingleton<InternService>();
+
+builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 
 var app = builder.Build();
 
