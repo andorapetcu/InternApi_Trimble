@@ -24,7 +24,7 @@ builder.Services.Configure<MongoDBSettings>(
 builder.Services.AddSingleton<IMongoDBSettings>(sp =>
     sp.GetRequiredService<IOptions<MongoDBSettings>>().Value);
 
-builder.Services.AddSingleton<InternService>();
+builder.Services.AddSingleton<IInternService, InternService>();
 
 builder.Services.AddAutoMapper(typeof(MapperProfile).Assembly);
 

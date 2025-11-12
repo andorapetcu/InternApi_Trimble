@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
-using InternApi.ModelEntity;
 using InternApi.ModelDTO;
-using MongoDB.Driver;
+using InternApi.ModelEntity;
 using InternApi.Settings;
+using MongoDB.Driver;
+using System.Globalization;
 
 namespace InternApi.Services
 {
-    public class InternService
+    public class InternService : IInternService
     {
-
         private readonly IMongoCollection<Intern> _interns;
         private readonly IMapper _mapper;
 
@@ -40,26 +40,20 @@ namespace InternApi.Services
         public async Task<List<InternDTO>> SortAscByName()
         {
             var interns = await GetAll();
-            return interns.OrderBy(intern => intern.Name).ToList();
+            var sorted = interns.OrderBy(intern => intern.Name).ToList();
+            return _mapper.Map<List<InternDTO>>(sorted);
         }
 
         public async Task<List<InternDTO>> SortDescByName()
         {
             var interns = await GetAll();
-            return interns.OrderByDescending(intern => intern.Name).ToList();
+            var sorted = interns.OrderByDescending(intern => intern.Name).ToList();
+            return _mapper.Map<List<InternDTO>>(sorted);
         }
 
         public async Task<bool> Create(InternDTO internDTO)
         {
             var intern = _mapper.Map<Intern>(internDTO);
-            if (intern == null)
-            {
-                return false;
-            }
-            if (intern.Id == Guid.Empty)
-            {
-                intern.Id = Guid.NewGuid();
-            }
             await _interns.InsertOneAsync(intern);
             return true;
         }
@@ -67,12 +61,8 @@ namespace InternApi.Services
         public async Task<bool> Update(Guid id, InternDTO internDTO)
         {
             var intern = _mapper.Map<Intern>(internDTO);
-            if (intern == null)
-            {
-                return false;
-            }
             var result = await _interns.ReplaceOneAsync(i => i.Id == id, intern);
-            return true;
+            return result.ModifiedCount > 0;
         }
 
         public async Task<bool> Delete(Guid id)
