@@ -1,0 +1,15 @@
+﻿using InternApi.ModelDTO;
+
+namespace InternApi.Services
+{
+    public interface IInternService
+    {
+        Task<List<InternDTO>> GetAll();
+        Task<InternDTO?> GetById(Guid id);
+        Task<bool> Create(InternDTO intern);
+        Task<bool> Update(Guid id, InternDTO intern);
+        Task<bool> Delete(Guid id);
+        Task<List<InternDTO>> SortAscByName();
+        Task<List<InternDTO>> SortDescByName();
+    }
+}
