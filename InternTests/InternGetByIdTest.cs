@@ -38,6 +38,20 @@ namespace InternTests
         }
 
         [Fact]
+        public async Task GetIntern_ReturnsBadRequest_WhenIdIsMissing()
+        {
+            var mockService = new Mock<IInternService>();
+
+            var controller = new InternController(mockService.Object);
+
+            var result = await controller.GetIntern(Guid.Empty);
+
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+
+            Assert.Equal("Invalid intern ID", badRequest.Value);
+        }
+
+        [Fact]
         public async Task GetIntern_ReturnsNotFound_WhenInternDoesNotExist()
         {
             var mockService = new Mock<IInternService>();

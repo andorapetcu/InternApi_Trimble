@@ -27,6 +27,8 @@ namespace InternApi.Controllers
         [HttpGet("{id}", Name = "GetInternById")]
         public async Task<IActionResult> GetIntern(Guid id)
         {
+            if (id == Guid.Empty)
+                return BadRequest("Invalid intern ID");
             var intern = await _internService.GetById(id);
             if (intern == null)
                 return NotFound();
