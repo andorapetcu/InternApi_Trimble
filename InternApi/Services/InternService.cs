@@ -12,11 +12,9 @@ namespace InternApi.Services
         private readonly IMongoCollection<Intern> _interns;
         private readonly IMapper _mapper;
 
-        public InternService(IMongoDBSettings settings, IMapper mapper)
+        public InternService(IMongoCollection<Intern> internsCollection, IMapper mapper)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
-            _interns = database.GetCollection<Intern>("Interns");
+            _interns = internsCollection;
             _mapper = mapper;
         }
 
@@ -27,8 +25,12 @@ namespace InternApi.Services
             return _mapper.Map<List<InternDTO>>(interns);
         }
 
-        public async Task<InternDTO> GetById(Guid id)
+        public async Task<InternDTO?> GetById(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                return null;
+            }
             var intern = await _interns.Find(intern => intern.Id == id).FirstOrDefaultAsync();
             if (intern == null)
             {
@@ -53,6 +55,15 @@ namespace InternApi.Services
 
         public async Task<bool> Create(InternDTO internDTO)
         {
+            if (internDTO == null)
+                return false;
+
+            if (GetById(internDTO.Id) != null)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(internDTO.Name))
+                return false;
+
             var intern = _mapper.Map<Intern>(internDTO);
             await _interns.InsertOneAsync(intern);
             return true;
@@ -60,6 +71,18 @@ namespace InternApi.Services
 
         public async Task<bool> Update(Guid id, InternDTO internDTO)
         {
+            if (internDTO == null)
+                return false;
+
+            if (id == Guid.Empty)
+                return false;
+
+            if (GetById(id) == null)
+                return false;
+
+            if (string.IsNullOrWhiteSpace(internDTO.Name))
+                return false;
+
             var intern = _mapper.Map<Intern>(internDTO);
             var result = await _interns.ReplaceOneAsync(i => i.Id == id, intern);
             return result.ModifiedCount > 0;
@@ -67,6 +90,12 @@ namespace InternApi.Services
 
         public async Task<bool> Delete(Guid id)
         {
+            if (id == Guid.Empty)
+                return false;
+
+            if (GetById(id) == null)
+                return false;
+
             var result = await _interns.DeleteOneAsync(intern => intern.Id == id);
             return result.DeletedCount > 0;
         }
