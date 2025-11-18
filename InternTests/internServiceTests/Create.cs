@@ -18,11 +18,9 @@ namespace InternTests.InternServiceTests
             _output = output;
         }
 
-        [Fact]   // !!!!!!!!!!! FAILS !!!!!!!!!!!!!!!!!!!!!
+        [Fact]
         public async Task Create_ReturnsTrue_WhenInternIsCreated()
         {
-
-            _output.WriteLine("--- Starting Create_ReturnsTrue_WhenInternIsCreated ---");
             var internEntity = new Intern
             {
                 Id = Guid.NewGuid(),
@@ -38,9 +36,6 @@ namespace InternTests.InternServiceTests
                 Age = 21,
                 DateOfBirth = DateTime.Parse("2004-03-24T00:00:00Z")
             };
-
-            _output.WriteLine($"DTO ID: {internDTO.Id}");
-            _output.WriteLine($"DTO Name: '{internDTO.Name}'");
 
             var mockCollection = new Mock<IMongoCollection<Intern>>();
             var mockMapper = new Mock<IMapper>();
@@ -62,8 +57,6 @@ namespace InternTests.InternServiceTests
             var service = new InternService(mockCollection.Object, mockMapper.Object);
 
             var result = await service.Create(internDTO);
-
-            _output.WriteLine($"Result returned by service: {result}");
 
             Assert.True(result);
 

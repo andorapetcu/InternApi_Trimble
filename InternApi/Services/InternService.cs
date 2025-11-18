@@ -58,7 +58,7 @@ namespace InternApi.Services
             if (internDTO == null)
                 return false;
 
-            if (GetById(internDTO.Id) != null)
+            if (await GetById(internDTO.Id) != null)
                 return false;
 
             if (string.IsNullOrWhiteSpace(internDTO.Name))
@@ -77,7 +77,7 @@ namespace InternApi.Services
             if (id == Guid.Empty)
                 return false;
 
-            if (GetById(id) == null)
+            if (await GetById(id) == null)
                 return false;
 
             if (string.IsNullOrWhiteSpace(internDTO.Name))
@@ -93,7 +93,7 @@ namespace InternApi.Services
             if (id == Guid.Empty)
                 return false;
 
-            if (GetById(id) == null)
+            if (await GetById(id) == null)
                 return false;
 
             var result = await _interns.DeleteOneAsync(intern => intern.Id == id);
