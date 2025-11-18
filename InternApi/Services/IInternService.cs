@@ -2,6 +2,12 @@
 
 namespace InternApi.Services
 {
+    /// <summary>
+    /// 
+    /// Interface fixing the methods that InternService will implement.
+    /// The methods return a Task because all database operations take a longer time on MongoDB.
+    /// 
+    /// </summary>
     public interface IInternService
     {
         Task<List<InternDTO>> GetAll();

@@ -9,7 +9,7 @@ namespace InternTests.InternServiceTests
 {
     public class Update
     {
-        [Fact]
+        [Fact] //!!! FAILS !!!!!!!!!!!!!!!!!!!!!!!!
         public async Task Update_ReturnsTrue_WhenInternIsUpdated()
         {
             var internId = Guid.NewGuid();
@@ -130,7 +130,7 @@ namespace InternTests.InternServiceTests
                 Times.Never);
         }
 
-        [Fact]  // !!!!!!!!!!! FAILS !!!!!!!!!!!!!!!!!!!!!
+        [Fact]
         public async Task Update_ReturnsFalse_WhenInternIsNotFound()
         {
             var internId = Guid.NewGuid();
@@ -182,12 +182,22 @@ namespace InternTests.InternServiceTests
 
             Assert.False(result);
 
+            mockCollection.Verify(c => c.FindAsync(
+                It.IsAny<FilterDefinition<Intern>>(),
+                It.IsAny<FindOptions<Intern, Intern>>(),
+                It.IsAny<CancellationToken>()),
+                Times.Once);
+
             mockCollection.Verify(c => c.ReplaceOneAsync(
                 It.IsAny<FilterDefinition<Intern>>(),
                 It.IsAny<Intern>(),
                 It.IsAny<ReplaceOptions>(),
                 It.IsAny<CancellationToken>()),
                 Times.Never);
+
+            mockMapper.Verify(
+               m => m.Map<Intern>(internDTO),
+               Times.Never);
         }
 
         [Fact]

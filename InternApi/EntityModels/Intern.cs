@@ -6,6 +6,9 @@ namespace InternApi.ModelEntity
 {
     public class Intern
     {
+        /// <summary>
+        /// The Intern Entity that represents the information in the database about the Intern.
+        /// </summary>
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required, StringLength(100)]
