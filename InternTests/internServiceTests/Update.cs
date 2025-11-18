@@ -9,7 +9,7 @@ namespace InternTests.InternServiceTests
 {
     public class Update
     {
-        [Fact] //!!! FAILS !!!!!!!!!!!!!!!!!!!!!!!!
+        [Fact] 
         public async Task Update_ReturnsTrue_WhenInternIsUpdated()
         {
             var internId = Guid.NewGuid();
@@ -32,6 +32,10 @@ namespace InternTests.InternServiceTests
             var mockCollection = new Mock<IMongoCollection<Intern>>();
             var mockMapper = new Mock<IMapper>();
 
+            var internDTOToReturn = new InternDTO { Id = internId, Name = internEntity.Name, Age = internEntity.Age, DateOfBirth = internEntity.DateOfBirth };
+            mockMapper.Setup(m => m.Map<InternDTO>(It.IsAny<Intern>()))
+                .Returns(internDTOToReturn);
+
             mockMapper.Setup(m => m.Map<Intern>(It.IsAny<InternDTO>()))
                 .Returns(internEntity);
 
@@ -53,7 +57,7 @@ namespace InternTests.InternServiceTests
             var replaceResult = Mock.Of<ReplaceOneResult>(r => r.IsAcknowledged == true && r.ModifiedCount == 1);
 
             mockCollection.Setup(c => c.ReplaceOneAsync(
-                It.IsAny<FilterDefinition<Intern>>(), 
+                It.IsAny<FilterDefinition<Intern>>(),
                 It.IsAny<Intern>(),
                 It.IsAny<ReplaceOptions>(),
                 It.IsAny<CancellationToken>()))
