@@ -1,0 +1,31 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_internapi
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - backend-network
+      
+  internapi:
+    build:
+      context: .
+      dockerfile: InternApi/Dockerfile
+    container_name: internapi
+    restart: always
+    ports:
+      - "5000:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  mongo_data:
