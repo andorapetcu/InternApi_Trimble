@@ -18,7 +18,7 @@ namespace InternTests.InternServiceTests
             var internToDelete = new Intern
             {
                 Id = internId,
-                Name = "",
+                Name = "Delete",
                 Age = 21,
                 DateOfBirth = DateTime.Parse("2004-03-24T00:00:00Z")
             };
@@ -26,7 +26,7 @@ namespace InternTests.InternServiceTests
             var internToDeleteDTO = new InternDTO
             {
                 Id = internId,
-                Name = "",
+                Name = "Delete",
                 Age = 21,
                 DateOfBirth = DateTime.Parse("2004-03-24T00:00:00Z")
             };
@@ -34,8 +34,14 @@ namespace InternTests.InternServiceTests
             var mockCollection = new Mock<IMongoCollection<Intern>>();
             var mockMapper = new Mock<IMapper>();
 
+            var internDTOToReturn = new InternDTO { 
+                Id = internId, 
+                Name = internToDelete.Name, 
+                Age = internToDelete.Age, 
+                DateOfBirth = internToDelete.DateOfBirth };
+
             mockMapper.Setup(m => m.Map<InternDTO>(It.IsAny<Intern>()))
-                  .Returns(internToDeleteDTO);
+                .Returns(internDTOToReturn);
 
             var mockCursor = new Mock<IAsyncCursor<Intern>>();
 
@@ -43,12 +49,8 @@ namespace InternTests.InternServiceTests
                 .ReturnsAsync(true)
                 .ReturnsAsync(false);
 
-            mockCursor.SetupSequence(_ => _.MoveNext(It.IsAny<CancellationToken>()))
-                .Returns(true)
-                .Returns(false);
-
             mockCursor.SetupGet(_ => _.Current)
-               .Returns(new List<Intern> { internToDelete });
+                .Returns(new List<Intern> { internToDelete });
 
             mockCollection.Setup(c => c.FindAsync(
                 It.IsAny<FilterDefinition<Intern>>(),
@@ -60,7 +62,6 @@ namespace InternTests.InternServiceTests
 
             mockCollection.Setup(c => c.DeleteOneAsync(
                 It.IsAny<FilterDefinition<Intern>>(),
-                It.IsAny<DeleteOptions>(),
                 It.IsAny<CancellationToken>()))
                 .ReturnsAsync(deleteResult);
 
@@ -78,7 +79,6 @@ namespace InternTests.InternServiceTests
 
             mockCollection.Verify(c => c.DeleteOneAsync(
                 It.IsAny<FilterDefinition<Intern>>(),
-                It.IsAny<DeleteOptions>(),
                 It.IsAny<CancellationToken>()),
                 Times.Once);
         }

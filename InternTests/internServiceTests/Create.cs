@@ -4,19 +4,10 @@ using Moq;
 using MongoDB.Driver;
 using AutoMapper;
 using InternApi.Services;
-using Xunit.Abstractions;
-
 namespace InternTests.InternServiceTests
 {
     public class Create
     {
-
-        private readonly ITestOutputHelper _output;
-
-        public Create(ITestOutputHelper output)
-        {
-            _output = output;
-        }
 
         [Fact]
         public async Task Create_ReturnsTrue_WhenInternIsCreated()
